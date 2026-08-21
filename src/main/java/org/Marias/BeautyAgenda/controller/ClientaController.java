@@ -23,6 +23,7 @@ public class ClientaController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<ClientaDTO> findById(@PathVariable Long id){
+
         return clientaService.findById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -43,16 +44,9 @@ public class ClientaController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<ClientaDTO> delete(@PathVariable Long id){
-        boolean resultado = clientaService.delete(id);
-        if (resultado) {
-            return ResponseEntity.noContent().build();
-        }
-        else  {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ClientaDTO> delete(@PathVariable Long id) {
+        clientaService.delete(id);
+        return ResponseEntity.noContent().build();
+
     }
-
-
-
 }

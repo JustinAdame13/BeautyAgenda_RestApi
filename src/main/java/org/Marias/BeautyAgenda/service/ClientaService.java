@@ -4,6 +4,7 @@ import org.Marias.BeautyAgenda.Mapper.ClientaMapper;
 import org.Marias.BeautyAgenda.dto.ClientaDTO;
 import org.Marias.BeautyAgenda.dto.ClientaRequestDTO;
 import org.Marias.BeautyAgenda.entity.Clienta;
+import org.Marias.BeautyAgenda.exception.ClientaNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.ClientaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,18 +62,18 @@ public class ClientaService {
 
         }
         else {
-            throw new RuntimeException("Clienta no encontrada");
+            throw new ClientaNoEncontradaException("No se encontro clienta con ese id ");
         }
 
     }
     //metodo para borrar clienta
-    public boolean delete(Long id){
+    public void delete(Long id){
         if(clientaRepo.findById(id).isPresent()){
             clientaRepo.deleteById(id);
-            return true;
+
         }
         else {
-            throw new RuntimeException("Cliente no encontrada");
+            throw new ClientaNoEncontradaException("No se encontro clienta con ese id ");
         }
     }
 
