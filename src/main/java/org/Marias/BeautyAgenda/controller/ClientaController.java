@@ -1,6 +1,7 @@
 package org.Marias.BeautyAgenda.controller;
 
 import org.Marias.BeautyAgenda.dto.ClientaDTO;
+import org.Marias.BeautyAgenda.dto.ClientaRequestDTO;
 import org.Marias.BeautyAgenda.service.ClientaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +26,32 @@ public class ClientaController {
         return clientaService.findById(id).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<ClientaDTO> findByNombre(@PathVariable String nombre){
-        return clientaService.findByNombre(nombre).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public List<ClientaDTO> findByNombre(@PathVariable String nombre){
+        return clientaService.findByNombre(nombre);
     }
 
+    @PostMapping
+    public ResponseEntity<ClientaDTO> save(@RequestBody ClientaRequestDTO dto){
+        return ResponseEntity.ok(clientaService.save(dto));
+    }
+
+    @PutMapping("/id/{id}")
+    public ResponseEntity<ClientaDTO> update(@PathVariable Long id, @RequestBody ClientaRequestDTO dto){
+        return ResponseEntity.ok(clientaService.update(id,dto));
+    }
+
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<ClientaDTO> delete(@PathVariable Long id){
+        boolean resultado = clientaService.delete(id);
+        if (resultado) {
+            return ResponseEntity.noContent().build();
+        }
+        else  {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 

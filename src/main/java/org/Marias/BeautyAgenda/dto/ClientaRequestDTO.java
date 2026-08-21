@@ -7,23 +7,22 @@ import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
-public class ClientaDTO {
+public class ClientaRequestDTO {
 
-    private Long id;
+
     private String nombre;
     private String telefono;
     private java.time.LocalDate fechaNacimiento;
     private boolean Recordatorios;
     private boolean marketing;
     private String notas;
-    private LocalDateTime fechaRegistro;
+
 
     //constructor
-    public ClientaDTO(Long id, LocalDateTime fechaRegistro, String nombre,
+    public ClientaRequestDTO( String nombre,
                       String telefono, java.time.LocalDate fechaNacimiento,
                       boolean recordatorios, boolean marketing, String notas) {
-        this.id = id;
-        this.fechaRegistro = fechaRegistro;
+
         this.nombre = nombre;
         this.telefono = telefono;
         this.fechaNacimiento = fechaNacimiento;
@@ -32,13 +31,7 @@ public class ClientaDTO {
         this.notas = notas;
     }
     //getters y setters
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
 
-    public void setFechaRegistro(LocalDateTime fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
 
     public String getNotas() {
         return notas;
@@ -88,11 +81,4 @@ public class ClientaDTO {
         this.nombre = nombre;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

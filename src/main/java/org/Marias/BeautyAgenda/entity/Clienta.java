@@ -17,12 +17,12 @@ public class Clienta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id" )
     private Long id;
-    @Column(name = "nombre", nullable = false, length = 120, unique = true)
+    @Column(name = "nombre", nullable = false, length = 150)
     private String nombre;
-    @Column(name = "telefono", unique = true, nullable = false, length = 20)
+    @Column(name = "telefono", nullable = false, length = 20, unique = true)
     private String telefono;
     @Column(name = "fecha_nacimiento")
-    private LocalDateTime fechaNacimiento;
+    private java.time.LocalDate fechaNacimiento;
     @Column(name = "opt_in_recordatorios", nullable = false)
     private boolean recordatorios;
     @Column(name = "opt_in_marketing", nullable = false)
