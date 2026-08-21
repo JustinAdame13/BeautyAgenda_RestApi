@@ -1,9 +1,5 @@
 package org.Marias.BeautyAgenda.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +9,7 @@ public class ClientaDTO {
     private String nombre;
     private String telefono;
     private java.time.LocalDate fechaNacimiento;
-    private boolean Recordatorios;
+    private boolean recordatorios;
     private boolean marketing;
     private String notas;
     private LocalDateTime fechaRegistro;
@@ -27,7 +23,7 @@ public class ClientaDTO {
         this.nombre = nombre;
         this.telefono = telefono;
         this.fechaNacimiento = fechaNacimiento;
-        Recordatorios = recordatorios;
+        this.recordatorios = recordatorios;
         this.marketing = marketing;
         this.notas = notas;
     }
@@ -57,11 +53,11 @@ public class ClientaDTO {
     }
 
     public boolean isRecordatorios() {
-        return Recordatorios;
+        return recordatorios;
     }
 
     public void setRecordatorios(boolean recordatorios) {
-        Recordatorios = recordatorios;
+        this.recordatorios = recordatorios;
     }
 
     public java.time.LocalDate getFechaNacimiento() {

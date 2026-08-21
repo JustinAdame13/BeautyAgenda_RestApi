@@ -32,7 +32,7 @@ public class ClientaController {
         return clientaService.findByNombre(nombre);
     }
 
-    @PostMapping
+    @PostMapping("/post")
     public ResponseEntity<ClientaDTO> save(@RequestBody ClientaRequestDTO dto){
         return ResponseEntity.ok(clientaService.save(dto));
     }
