@@ -28,9 +28,11 @@ public class ClientaService {
     }
 
     //metodo para buscar una clienta por id
-    public Optional<ClientaDTO> findById(Long id){
-        return clientaRepo.findById(id).map(ClientaMapper::toDTO);
+    public ClientaDTO findById(Long id) {
+        Clienta clienta = clientaRepo.findById(id)
+                .orElseThrow(() -> new ClientaNoEncontradaException("clienta con ese id no encontrada"));
 
+        return ClientaMapper.toDTO(clienta);
     }
 
     //metodo para buscar clienta por nombre
