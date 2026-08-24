@@ -1,10 +1,7 @@
 package org.Marias.BeautyAgenda.controller;
 
-import org.Marias.BeautyAgenda.Mapper.ServicioMapper;
 import org.Marias.BeautyAgenda.dto.ServicioDTO;
 import org.Marias.BeautyAgenda.dto.ServicioRequestDTO;
-import org.Marias.BeautyAgenda.entity.Servicio;
-import org.Marias.BeautyAgenda.service.ClientaService;
 import org.Marias.BeautyAgenda.service.ServicioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +15,6 @@ public class ServicioController {
 
     @Autowired
     private ServicioService servicioService;
-    @Autowired
-    private ClientaService clientaService;
 
     @GetMapping
     public List<ServicioDTO> getServicios(){
@@ -46,7 +41,7 @@ public class ServicioController {
         return ResponseEntity.ok(servicioService.update(dto,id));
     }
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<ServicioDTO> deleteServicio(@PathVariable Long id){
+    public ResponseEntity<Void> deleteServicio(@PathVariable Long id){
         servicioService.delete(id);
         return ResponseEntity.ok().build();
     }
