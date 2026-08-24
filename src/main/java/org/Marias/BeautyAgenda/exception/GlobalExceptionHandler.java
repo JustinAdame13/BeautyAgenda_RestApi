@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-@ExceptionHandler(ClientaNoEncontradaException.class)
-public ResponseEntity<ErrorResponseDTO> handleClientaNoEncontradaException(ClientaNoEncontradaException ex){
+@ExceptionHandler(EntidadNoEncontradaException.class)
+public ResponseEntity<ErrorResponseDTO> handleClientaNoEncontradaException(EntidadNoEncontradaException ex){
     ErrorResponseDTO error = new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(),
                             LocalDateTime.now(), ex.getMessage());
 

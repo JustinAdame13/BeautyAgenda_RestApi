@@ -4,7 +4,7 @@ import org.Marias.BeautyAgenda.Mapper.ClientaMapper;
 import org.Marias.BeautyAgenda.dto.ClientaDTO;
 import org.Marias.BeautyAgenda.dto.ClientaRequestDTO;
 import org.Marias.BeautyAgenda.entity.Clienta;
-import org.Marias.BeautyAgenda.exception.ClientaNoEncontradaException;
+import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.ClientaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class ClientaService {
     //metodo para buscar una clienta por id
     public ClientaDTO findById(Long id) {
         Clienta clienta = clientaRepo.findById(id)
-                .orElseThrow(() -> new ClientaNoEncontradaException("clienta con ese id no encontrada"));
+                .orElseThrow(() -> new EntidadNoEncontradaException("clienta con ese id no encontrada"));
 
         return ClientaMapper.toDTO(clienta);
     }
@@ -64,7 +64,7 @@ public class ClientaService {
 
         }
         else {
-            throw new ClientaNoEncontradaException("No se encontro clienta con ese id ");
+            throw new EntidadNoEncontradaException("No se encontro clienta con ese id ");
         }
 
     }
@@ -75,7 +75,7 @@ public class ClientaService {
 
         }
         else {
-            throw new ClientaNoEncontradaException("No se encontro clienta con ese id ");
+            throw new EntidadNoEncontradaException("No se encontro clienta con ese id ");
         }
     }
 
