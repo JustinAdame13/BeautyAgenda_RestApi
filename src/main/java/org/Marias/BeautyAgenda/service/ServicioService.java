@@ -35,12 +35,12 @@ public class ServicioService {
 
         return ServicioMapper.toDTO(servicio);
     }
-    //metodo para guardar clienta nueva
+    //metodo para guardar servicio nueva
     public ServicioDTO save(ServicioRequestDTO dto){
         Servicio servicio = ServicioMapper.RqToEntity(dto);
         return ServicioMapper.toDTO(servicioRepo.save(servicio));
     }
-    //metodo para actualizar clienta
+    //metodo para actualizar servicio
     public ServicioDTO update(ServicioRequestDTO dto, Long id){
         Optional<Servicio> existe = servicioRepo.findById(id);
         if(existe.isPresent()){
