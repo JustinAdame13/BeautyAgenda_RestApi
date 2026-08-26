@@ -25,7 +25,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findById(id));
     }
     @PostMapping
-    public ResponseEntity<UsuarioDTO> save(@RequestBody UsuarioRequestDTO dto){
+    public ResponseEntity<UsuarioDTO> save(@RequestBody UsuarioRequestDTO dto ){
         return ResponseEntity.ok(usuarioService.save(dto));
     }
     @PutMapping("/id/{id}")

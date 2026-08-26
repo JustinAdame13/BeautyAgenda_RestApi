@@ -18,8 +18,8 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "usaername", nullable = false, length = 150, unique = true)
-    private String usaername;
+    @Column(name = "username", nullable = false, length = 150, unique = true)
+    private String username;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;

@@ -10,6 +10,7 @@ import org.Marias.BeautyAgenda.entity.Usuario;
 import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //metodo para buscar todos los usuarios
     public List<UsuarioDTO> findAll(){
         return usuarioRepo.findAll().stream()
@@ -34,7 +39,7 @@ public class UsuarioService {
     }
     //metodo para guardar
     public UsuarioDTO save(UsuarioRequestDTO dto){
-        Usuario usuario = UsuarioMapper.RqToEntity(dto);
+        Usuario usuario = UsuarioMapper.RqToEntity(dto, passwordEncoder.encode(dto.getPassword()));
         return UsuarioMapper.toDTO(usuarioRepo.save(usuario));
     }
     //metodo para actualizar servicio
@@ -42,8 +47,8 @@ public class UsuarioService {
         Optional<Usuario> existe = usuarioRepo.findById(id);
         if (existe.isPresent()) {
             Usuario usuario = existe.get();
-            usuario.setUsaername(dto.getUsername());
-            usuario.setPasswordHash(dto.getPassword());
+            usuario.setUsername(dto.getUsername());
+
             usuario.setRol(dto.getRol());
             usuario.setActivo(dto.getActivo());
             return UsuarioMapper.toDTO(usuarioRepo.save(usuario));

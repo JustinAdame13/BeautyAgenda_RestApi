@@ -1,7 +1,9 @@
 package org.Marias.BeautyAgenda.entity.enums;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
+@Converter
 public class RolUsuarioConverter implements AttributeConverter<RolUsuario, String> {
 
     @Override
