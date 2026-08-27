@@ -7,8 +7,6 @@ import org.Marias.BeautyAgenda.entity.Usuario;
 
 public class UsuarioMapper {
 
-
-
     public static UsuarioDTO toDTO (Usuario usuario){
         return new UsuarioDTO(usuario.getId(), usuario.getUsername(),
                 usuario.getRol(), usuario.getActivo());
