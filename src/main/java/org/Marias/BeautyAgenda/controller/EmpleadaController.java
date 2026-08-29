@@ -2,7 +2,6 @@ package org.Marias.BeautyAgenda.controller;
 
 import org.Marias.BeautyAgenda.dto.EmpleadaDTO;
 import org.Marias.BeautyAgenda.dto.EmpleadaRequestDTO;
-import org.Marias.BeautyAgenda.entity.Empleada;
 import org.Marias.BeautyAgenda.service.EmpleadaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class EmpleadaController {
         return ResponseEntity.ok(empleadaService.findbyId(id));
     }
     @PostMapping
-    public ResponseEntity<EmpleadaDTO> save (EmpleadaRequestDTO dto){
+    public ResponseEntity<EmpleadaDTO> save (@RequestBody EmpleadaRequestDTO dto){
         return ResponseEntity.ok(empleadaService.save(dto));
     }
     @PutMapping("/id/{id}")
