@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.Marias.BeautyAgenda.entity.enums.TipoServicio;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +18,6 @@ public class ServicioRequestDTO {
     private BigDecimal precio;
     private TipoServicio tipo;
     private String descripcion;
+    private List<Long>  idsPlantillas;
 
 }

@@ -30,6 +30,7 @@ public class SecurityConfig {
                         // Gestión de usuarios: solo ADMIN
                         .requestMatchers("/Usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/Empleadas/**").hasRole("ADMIN")
+                        .requestMatchers("/Plantillas/**").hasRole("ADMIN")
 
                         // Servicios: todos pueden ver, solo ADMIN y JEFA modifican
                         .requestMatchers(HttpMethod.GET, "/Servicios/**").authenticated()

@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/Citas")
 public class CitaController {
+
     @Autowired
     private CitaService citaService;
 
@@ -40,4 +41,5 @@ public class CitaController {
         citaService.delete(id);
         return ResponseEntity.ok().build();
     }
+
 }

@@ -1,13 +1,13 @@
 package org.Marias.BeautyAgenda.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.Marias.BeautyAgenda.entity.enums.TipoServicio;
 import org.Marias.BeautyAgenda.entity.enums.TipoServicioConverter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "servicio")
@@ -32,6 +32,17 @@ public class Servicio {
 
     @Column(name = "descripcion")
     private String descripcion;
+
+    //relacion muchos a muchos con plantilla
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany
+    @JoinTable(
+            name = "servicio_plantilla",
+            joinColumns = @JoinColumn(name = "id_servicio"),
+            inverseJoinColumns = @JoinColumn(name = "id_plantilla")
+    )
+    private Set<PlantillaMensaje> plantillas = new HashSet<>();
 
 
 }

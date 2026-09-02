@@ -1,6 +1,6 @@
 package org.Marias.BeautyAgenda.service;
 
-import jakarta.transaction.Transactional;
+
 import org.Marias.BeautyAgenda.Mapper.CitaMapper;
 import org.Marias.BeautyAgenda.Mapper.CitaServicioMapper;
 import org.Marias.BeautyAgenda.dto.CitaDTO;
@@ -12,11 +12,12 @@ import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -51,10 +52,12 @@ public class CitaService {
     }
 
     //metodo para encontar todas las citas
+    @Transactional(readOnly = true)
     public List<CitaDTO> findAll(){
         return citaRepo.findAll().stream().map(CitaMapper::toDTO).collect(Collectors.toList());
     }
     //metodo para buscar cita por id
+    @Transactional(readOnly = true)
     public CitaDTO findById(Long id){
         Cita cita = citaRepo.findById(id)
                 .orElseThrow(()-> new EntidadNoEncontradaException("Cita no encontrada"));
@@ -73,8 +76,9 @@ public class CitaService {
         Cita cita = CitaMapper.RqToEntity(dto, clienta, empleada, servicios);
         return CitaMapper.toDTO(citaRepo.save(cita));
     }
+  
     //metodo para editar citas
-    @Transactional //si algo falla_todo se devuelve
+    @Transactional
     public CitaDTO update(Long id, CitaRequestDTO dto){
         Cita cita = citaRepo.findById(id)
                 .orElseThrow(()-> new EntidadNoEncontradaException("Cita no encontrada"));
@@ -90,11 +94,32 @@ public class CitaService {
 
         Map<Long, Servicio> servicios = resolverServicios(dto.getServicios());
 
-        cita.getCitaServicio().clear();
-        cita.getCitaServicio().addAll(dto.getServicios().stream()
-                .map(dtoServicio -> CitaServicioMapper.RqtoEntity(
-                        dtoServicio, cita, servicios.get(dtoServicio.getIdServicio())))
-                .collect(Collectors.toList()));
+        // Indexamos la colección actual por idServicio para poder buscarla en O(1)
+        Map<Long, CitaServicio> actuales = cita.getCitaServicio().stream()
+                .collect(Collectors.toMap(cs -> cs.getServicio().getId(), cs -> cs));
+
+        // Set para saber, al final, qué idServicio siguen vigentes según el DTO
+        Set<Long> idsEnDto = dto.getServicios().stream()
+                .map(CitaServicioRequestDTO::getIdServicio)
+                .collect(Collectors.toSet());
+
+        // 1. Actualizar existentes o agregar nuevos
+        for (CitaServicioRequestDTO servicioDto : dto.getServicios()) {
+            CitaServicio existente = actuales.get(servicioDto.getIdServicio());
+
+            if (existente != null) {
+                // Ya existía esa combinación cita-servicio: solo actualizamos el precio
+                existente.setPrecioCobrado(servicioDto.getPrecioCobrado());
+            } else {
+                // No existía: lo agregamos como nuevo
+                CitaServicio nuevo = CitaServicioMapper.RqtoEntity(
+                        servicioDto, cita, servicios.get(servicioDto.getIdServicio()));
+                cita.getCitaServicio().add(nuevo);
+            }
+        }
+
+        // 2. Eliminar los que ya no vienen en el DTO (orphanRemoval se encarga del DELETE)
+        cita.getCitaServicio().removeIf(cs -> !idsEnDto.contains(cs.getServicio().getId()));
 
         return CitaMapper.toDTO(citaRepo.save(cita));
     }
