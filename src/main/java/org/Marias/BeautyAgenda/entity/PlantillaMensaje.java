@@ -32,4 +32,8 @@ public class PlantillaMensaje {
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "plantillas", fetch = FetchType.LAZY)
     private Set<Servicio> servicios = new HashSet<>();
+
+    @Column(name = "dias_offset")
+    private Integer diasOffset;
+
 }

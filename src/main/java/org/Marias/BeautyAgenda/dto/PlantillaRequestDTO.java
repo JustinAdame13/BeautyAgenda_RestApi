@@ -13,6 +13,7 @@ public class PlantillaRequestDTO {
 
     private TipoPlantilla tipo;
     private String nombreMeta;
+    private Integer diasOffset;
 
 }
 

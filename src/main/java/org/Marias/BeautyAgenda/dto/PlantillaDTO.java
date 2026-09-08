@@ -16,4 +16,5 @@ public class PlantillaDTO {
     private TipoPlantilla tipo;
     private String nombreMeta;
     private List<Long> idsServicios;
+    private Integer diasOffset;
 }

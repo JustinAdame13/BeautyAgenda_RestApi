@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,31 +100,6 @@ public class MensajeService {
         }
     }
 
-    //metodo que genera mensaje para cada cita
-    public List<MensajeDTO> generarMensajesParaCita(Cita cita){
 
-        List<MensajeDTO> mensajes = cita.getCitaServicio()
-                .stream()
-                .map(CitaServicio::getServicio)
-                .map(Servicio::getPlantillas)
-                .map(p-> p.stream()
-                        .filter(n-> n.getTipo() == TipoPlantilla.RECORDATORIO).findFirst().orElseThrow()
-                        )
-                .map(PlantillaMensaje::getId)
-                .map(idPlant -> new MensajeRequestDTO(cita.getClienta().getId(),
-                                                            cita.getId(),
-                                                            idPlant,
-                                                            cita.getInicio().toLocalDate().minusDays(1),
-                                                            Map.of(
-                                                                    "nombre",cita.getClienta().getNombre(),
-                                                                    "Hora", cita.getInicio().toLocalTime().toString()
-                                                                )
-                                                            )
-                )
-                ;
-
-        return null;
-    }
-    //metodo para generar un mensaje
 
 }

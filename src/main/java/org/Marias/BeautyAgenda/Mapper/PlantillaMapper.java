@@ -12,11 +12,12 @@ public class PlantillaMapper {
     public static PlantillaDTO toDTO (PlantillaMensaje plantilla){
         return new PlantillaDTO(plantilla.getId(), plantilla.getTipo(),
                 plantilla.getNombreMeta(),
-                plantilla.getServicios().stream().map(s -> s.getId()).collect(Collectors.toList()));
+                plantilla.getServicios().stream().map(s -> s.getId()).collect(Collectors.toList()),
+                plantilla.getDiasOffset());
     }
 
     public static PlantillaMensaje toEntity (PlantillaRequestDTO dto){
-     return new PlantillaMensaje(null, dto.getTipo(), dto.getNombreMeta(), new HashSet<>());
+     return new PlantillaMensaje(null, dto.getTipo(), dto.getNombreMeta(), new HashSet<>(), dto.getDiasOffset());
     }
 
 
