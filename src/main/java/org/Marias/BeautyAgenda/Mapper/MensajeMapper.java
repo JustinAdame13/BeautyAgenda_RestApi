@@ -34,4 +34,7 @@ public class MensajeMapper {
                             dto.getParametros(),
                             null);
     }
+    public static Mensaje upToEntity(){
+        return new Mensaje();
+    }
 }
