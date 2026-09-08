@@ -100,6 +100,53 @@ public class MensajeService {
         }
     }
 
+    //metodo que genera mensaje para cada cita
+    public List<MensajeDTO> generarMensajesParaCita(Cita cita){
+        List<MensajeDTO> mensajesCreados = new ArrayList<>();
+        for (CitaServicio citaServicio : cita.getCitaServicio()) {
+            //tomamos el servicio de el citaServicio
+            Servicio servicio = citaServicio.getServicio();
 
+            //buscar plantilla recordatorio
+            Optional<PlantillaMensaje> plantillaRecordatorio = buscarPlantilla(servicio, TipoPlantilla.RECORDATORIO);
+
+            //calcular si aplica el recordatorio
+            LocalDateTime momentoRecordatorio = cita.getInicio().toLocalDate().minusDays(1).atTime(20,0);
+            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now());
+
+            if(plantillaRecordatorio.isPresent() && generarRecordatorio){
+                MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
+                        cita.getId(),
+                        plantillaRecordatorio.get().getId(),
+                        momentoRecordatorio.toLocalDate(),
+                        Map.of(
+                                "nombre", cita.getClienta().getNombre(),
+                                "hora", cita.getInicio().toString()
+                        ));
+                mensajesCreados.add(save(dto));
+            }
+            //buscamos plantilla de seguimiento
+            Optional<PlantillaMensaje> plantillaSeguimiento = buscarPlantilla(servicio, TipoPlantilla.SEGUIMIENTO);
+            if(plantillaSeguimiento.isPresent()){
+                MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
+                        cita.getId(),
+                        plantillaSeguimiento.get().getId(),
+                        cita.getInicio().toLocalDate().plusDays(plantillaSeguimiento.get().getDiasOffset()),
+                        Map.of(
+                                "nombre",cita.getClienta().getNombre()
+
+                        ));
+                mensajesCreados.add(save(dto));
+
+            }
+        }
+        return mensajesCreados;
+    }
+
+    //metodo auxiliar para bucar plantilla por tipo
+    public Optional<PlantillaMensaje> buscarPlantilla(Servicio servicio, TipoPlantilla tipoPlantilla){
+        return servicio.getPlantillas().stream().filter(n -> n.getTipo() == tipoPlantilla).findFirst();
+    }
+    //metodo para generar un mensaje
 
 }
