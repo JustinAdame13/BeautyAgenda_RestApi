@@ -26,13 +26,13 @@ public class MensajeController {
         return ResponseEntity.ok(mensajeService.findById(id));
     }
 
-    @GetMapping("/Estado/{estado}")
+    @GetMapping("/estado/{estado}")
     public List<MensajeDTO> findByEstado(@PathVariable EstadoMensaje estado) {
 
         return mensajeService.findByEstado(estado);
 
     }
-    @GetMapping("/ClientaId/{id}")
+    @GetMapping("/clientaId/{id}")
     public List<MensajeDTO> findByClienta(@PathVariable Long id){
         return mensajeService.findByClienta(id);
     }

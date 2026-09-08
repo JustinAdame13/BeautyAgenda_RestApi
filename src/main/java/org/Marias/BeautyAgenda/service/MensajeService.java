@@ -4,11 +4,9 @@ import org.Marias.BeautyAgenda.Mapper.MensajeMapper;
 import org.Marias.BeautyAgenda.dto.MensajeDTO;
 import org.Marias.BeautyAgenda.dto.MensajeRequestDTO;
 import org.Marias.BeautyAgenda.dto.MensajeUpdateDTO;
-import org.Marias.BeautyAgenda.entity.Cita;
-import org.Marias.BeautyAgenda.entity.Clienta;
-import org.Marias.BeautyAgenda.entity.Mensaje;
-import org.Marias.BeautyAgenda.entity.PlantillaMensaje;
+import org.Marias.BeautyAgenda.entity.*;
 import org.Marias.BeautyAgenda.entity.enums.EstadoMensaje;
+import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.CitaRepository;
 import org.Marias.BeautyAgenda.repository.ClientaRepository;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -101,5 +100,20 @@ public class MensajeService {
             throw new EntidadNoEncontradaException("no se encontro el mensaje con ese id");
         }
     }
+
+    //metodo que genera mensaje para cada cita
+    public MensajeDTO generarMensajesParaCita(Cita cita){
+
+        Set<PlantillaMensaje> plantillas = cita.getCitaServicio()
+                .stream()
+                .map(CitaServicio::getServicio)
+                .map(Servicio::getPlantillas)
+                .map(p-> p.stream()
+                        .filter(n-> n.getTipo() == TipoPlantilla.RECORDATORIO).findFirst()
+                );
+
+        return null;
+    }
+    //metodo para generar un mensaje
 
 }
