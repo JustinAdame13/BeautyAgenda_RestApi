@@ -3,11 +3,10 @@ package org.Marias.BeautyAgenda.service;
 
 import org.Marias.BeautyAgenda.Mapper.CitaMapper;
 import org.Marias.BeautyAgenda.Mapper.CitaServicioMapper;
-import org.Marias.BeautyAgenda.dto.CitaDTO;
-import org.Marias.BeautyAgenda.dto.CitaRequestDTO;
+import org.Marias.BeautyAgenda.dto.*;
 
-import org.Marias.BeautyAgenda.dto.CitaServicioRequestDTO;
 import org.Marias.BeautyAgenda.entity.*;
+import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -34,6 +33,8 @@ public class CitaService {
     private EmpleadaRepository empleadaRepo;
     @Autowired
     private ServicioRepository servicioRepo;
+    @Autowired
+    private MensajeService mensajeService;
 
     //metodo utilitario que convierte una lista CitaServicioRequestDTO a map<Long, servicio>
     private Map<Long, Servicio> resolverServicios(List<CitaServicioRequestDTO> serviciosDTO) {
@@ -74,6 +75,8 @@ public class CitaService {
         Map<Long, Servicio> servicios = resolverServicios(dto.getServicios());
 
         Cita cita = CitaMapper.RqToEntity(dto, clienta, empleada, servicios);
+
+        generarMensajesParaCita(cita);
         return CitaMapper.toDTO(citaRepo.save(cita));
     }
   
@@ -131,6 +134,53 @@ public class CitaService {
         else{
             throw new EntidadNoEncontradaException("Cita no encontrada");
         }
+    }
+    //metodo que genera mensaje para cada cita
+    public List<MensajeDTO> generarMensajesParaCita(Cita cita){
+        List<MensajeDTO> mensajesCreados = new ArrayList<>();
+        for (CitaServicio citaServicio : cita.getCitaServicio()) {
+            //tomamos el servicio de el citaServicio
+            Servicio servicio = citaServicio.getServicio();
+
+            //buscar plantilla recordatorio
+            Optional<PlantillaMensaje> plantillaRecordatorio = buscarPlantilla(servicio, TipoPlantilla.RECORDATORIO);
+
+            //calcular si aplica el recordatorio
+            LocalDateTime momentoRecordatorio = cita.getInicio().toLocalDate().minusDays(1).atTime(20,0);
+            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now());
+
+            if(plantillaRecordatorio.isPresent() && generarRecordatorio){
+                MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
+                        cita.getId(),
+                        plantillaRecordatorio.get().getId(),
+                        momentoRecordatorio.toLocalDate(),
+                        Map.of(
+                                "nombre", cita.getClienta().getNombre(),
+                                "hora", cita.getInicio().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        ));
+                mensajesCreados.add(mensajeService.save(dto));
+            }
+            //buscamos plantilla de seguimiento
+            Optional<PlantillaMensaje> plantillaSeguimiento = buscarPlantilla(servicio, TipoPlantilla.SEGUIMIENTO);
+            if(plantillaSeguimiento.isPresent()){
+                MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
+                        cita.getId(),
+                        plantillaSeguimiento.get().getId(),
+                        cita.getInicio().toLocalDate().plusDays(plantillaSeguimiento.get().getDiasOffset()),
+                        Map.of(
+                                "nombre",cita.getClienta().getNombre()
+
+                        ));
+                mensajesCreados.add(mensajeService.save(dto));
+
+            }
+        }
+        return mensajesCreados;
+    }
+
+    //metodo auxiliar para bucar plantilla por tipo
+    private Optional<PlantillaMensaje> buscarPlantilla(Servicio servicio, TipoPlantilla tipoPlantilla){
+        return servicio.getPlantillas().stream().filter(n -> n.getTipo() == tipoPlantilla).findFirst();
     }
 
 }
