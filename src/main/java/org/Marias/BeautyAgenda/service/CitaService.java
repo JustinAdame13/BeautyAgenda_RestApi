@@ -76,8 +76,9 @@ public class CitaService {
 
         Cita cita = CitaMapper.RqToEntity(dto, clienta, empleada, servicios);
 
-        generarMensajesParaCita(cita);
-        return CitaMapper.toDTO(citaRepo.save(cita));
+        Cita citaGuardada = citaRepo.save(cita);
+        generarMensajesParaCita(citaGuardada);
+        return CitaMapper.toDTO(citaGuardada);
     }
   
     //metodo para editar citas
