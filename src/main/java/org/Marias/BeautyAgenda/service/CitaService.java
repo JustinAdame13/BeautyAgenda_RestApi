@@ -6,6 +6,7 @@ import org.Marias.BeautyAgenda.Mapper.CitaServicioMapper;
 import org.Marias.BeautyAgenda.dto.*;
 
 import org.Marias.BeautyAgenda.entity.*;
+import org.Marias.BeautyAgenda.entity.enums.EstadoCita;
 import org.Marias.BeautyAgenda.entity.enums.EstadoMensaje;
 import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
@@ -90,7 +91,15 @@ public class CitaService {
     public CitaDTO update(Long id, CitaRequestDTO dto){
         Cita cita = citaRepo.findById(id)
                 .orElseThrow(()-> new EntidadNoEncontradaException("Cita no encontrada"));
-
+        //guardamos datos viejos
+        // Snapshot de los valores relevantes ANTES de mutar la entidad
+        LocalDateTime inicioAnterior = cita.getInicio();
+        Long idClientaAnterior = cita.getClienta().getId();
+        Set<Long> serviciosAnteriores = cita.getCitaServicio().stream()
+                .map(cs -> cs.getServicio().getId())
+                .collect(Collectors.toSet());
+        EstadoCita estadoAnterior = cita.getEstado();
+        //seters normales
         cita.setClienta(clientaRepo.findById(dto.getIdClienta())
                 .orElseThrow(()-> new EntidadNoEncontradaException("Clienta no encontrada")));
         cita.setEmpleada(empleadaRepo.findById(dto.getIdEmpleada())
@@ -130,18 +139,44 @@ public class CitaService {
         // 2. Eliminar los que ya no vienen en el DTO (orphanRemoval se encarga del DELETE)
         cita.getCitaServicio().removeIf(cs -> !idsEnDto.contains(cs.getServicio().getId()));
 
-        //eliminamos los mensajes creados de esta cita actualizada que esten programados
-        mensajeRepo.findByCitaIdAndEstado(cita.getId(), EstadoMensaje.PROGRAMADO).clear();
+        //creamos booleanos de comprobacion de cambio de datos
+        Set<Long> serviciosNuevos = idsEnDto; // ya lo calculaste arriba, reutilízalo
 
-        return CitaMapper.toDTO(citaRepo.save(cita));
+        boolean cambioInicio = !inicioAnterior.equals(dto.getInicio());
+        boolean cambioClienta = !idClientaAnterior.equals(dto.getIdClienta());
+        boolean cambioServicios = !serviciosAnteriores.equals(serviciosNuevos);
+        boolean seCancelo = dto.getEstado() == EstadoCita.CANCELADA;
+        boolean seReactivo = estadoAnterior == EstadoCita.CANCELADA && dto.getEstado() != EstadoCita.CANCELADA;
+
+        Cita citaGuardada = citaRepo.save(cita);
+
+        if (cambioInicio || cambioClienta || cambioServicios || seCancelo || seReactivo) {
+            mensajeRepo.deleteAll(
+                    mensajeRepo.findByCitaIdAndEstado(cita.getId(), EstadoMensaje.PROGRAMADO)
+            );
+            if (!seCancelo) {
+                generarMensajesParaCita(citaGuardada);
+            }
+        }
+        return CitaMapper.toDTO( citaGuardada );
     }
     //metodo para borrar
+    @Transactional
     public void delete(Long id){
-        if(citaRepo.existsById(id)){
-            citaRepo.deleteById(id);
-        }
-        else{
-            throw new EntidadNoEncontradaException("Cita no encontrada");
+        Cita cita = citaRepo.findById(id)
+                .orElseThrow(() -> new EntidadNoEncontradaException("Cita no encontrada"));
+
+        boolean tieneHistorial = mensajeRepo.existsByCitaIdAndEstadoIn(
+                id, List.of(EstadoMensaje.ENVIADO, EstadoMensaje.FALLIDO));
+
+        // siempre limpiamos los PROGRAMADO, sin importar el camino
+        mensajeRepo.deleteAll(mensajeRepo.findByCitaIdAndEstado(id, EstadoMensaje.PROGRAMADO));
+
+        if (!tieneHistorial) {
+            citaRepo.delete(cita);
+        } else {
+            cita.setEstado(EstadoCita.CANCELADA);
+            citaRepo.save(cita);
         }
     }
     //metodo que genera mensaje para cada cita

@@ -10,4 +10,5 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findByEstado(EstadoMensaje estado);
     List<Mensaje> findByClientaId(Long idClienta);
     List<Mensaje> findByCitaIdAndEstado(Long idCita, EstadoMensaje estado);
+    boolean existsByCitaIdAndEstadoIn(Long idCita, List<EstadoMensaje> estados);
 }
