@@ -6,6 +6,7 @@ import org.Marias.BeautyAgenda.Mapper.CitaServicioMapper;
 import org.Marias.BeautyAgenda.dto.*;
 
 import org.Marias.BeautyAgenda.entity.*;
+import org.Marias.BeautyAgenda.entity.enums.EstadoMensaje;
 import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 import org.Marias.BeautyAgenda.exception.EntidadNoEncontradaException;
 import org.Marias.BeautyAgenda.repository.*;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +37,8 @@ public class CitaService {
     private ServicioRepository servicioRepo;
     @Autowired
     private MensajeService mensajeService;
+    @Autowired
+    private MensajeRepository mensajeRepo;
 
     //metodo utilitario que convierte una lista CitaServicioRequestDTO a map<Long, servicio>
     private Map<Long, Servicio> resolverServicios(List<CitaServicioRequestDTO> serviciosDTO) {
@@ -107,6 +111,7 @@ public class CitaService {
                 .map(CitaServicioRequestDTO::getIdServicio)
                 .collect(Collectors.toSet());
 
+
         // 1. Actualizar existentes o agregar nuevos
         for (CitaServicioRequestDTO servicioDto : dto.getServicios()) {
             CitaServicio existente = actuales.get(servicioDto.getIdServicio());
@@ -124,6 +129,9 @@ public class CitaService {
 
         // 2. Eliminar los que ya no vienen en el DTO (orphanRemoval se encarga del DELETE)
         cita.getCitaServicio().removeIf(cs -> !idsEnDto.contains(cs.getServicio().getId()));
+
+        //eliminamos los mensajes creados de esta cita actualizada que esten programados
+        mensajeRepo.findByCitaIdAndEstado(cita.getId(), EstadoMensaje.PROGRAMADO).clear();
 
         return CitaMapper.toDTO(citaRepo.save(cita));
     }
@@ -148,7 +156,7 @@ public class CitaService {
 
             //calcular si aplica el recordatorio
             LocalDateTime momentoRecordatorio = cita.getInicio().toLocalDate().minusDays(1).atTime(20,0);
-            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now());
+            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now(ZoneId.of("America/Mexico_City")));
 
             if(plantillaRecordatorio.isPresent() && generarRecordatorio){
                 MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
