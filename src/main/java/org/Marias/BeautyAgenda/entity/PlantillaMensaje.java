@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 import org.Marias.BeautyAgenda.entity.enums.TipoPlantillaConverter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -35,5 +38,9 @@ public class PlantillaMensaje {
 
     @Column(name = "dias_offset")
     private Integer diasOffset;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "orden_parametros", columnDefinition = "jsonb")
+    private List<String> ordenParametros;
 
 }

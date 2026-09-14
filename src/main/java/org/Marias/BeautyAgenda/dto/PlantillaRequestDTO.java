@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.Marias.BeautyAgenda.entity.enums.TipoPlantilla;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class PlantillaRequestDTO {
     private TipoPlantilla tipo;
     private String nombreMeta;
     private Integer diasOffset;
+    private List<String> ordenParametros;
 
 }
 

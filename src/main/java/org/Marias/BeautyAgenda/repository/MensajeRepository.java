@@ -4,11 +4,15 @@ import org.Marias.BeautyAgenda.entity.Mensaje;
 import org.Marias.BeautyAgenda.entity.enums.EstadoMensaje;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findByEstado(EstadoMensaje estado);
     List<Mensaje> findByClientaId(Long idClienta);
     List<Mensaje> findByCitaIdAndEstado(Long idCita, EstadoMensaje estado);
+    List<Mensaje> findByEstadoAndFechaProgramada(EstadoMensaje estado, LocalDate fecha);
     boolean existsByCitaIdAndEstadoIn(Long idCita, List<EstadoMensaje> estados);
+    boolean existsByClientaIdAndPlantillaIdAndEstadoAndFechaProgramada(
+            Long idClienta, Long idPlantilla, EstadoMensaje estado, LocalDate fecha);
 }
