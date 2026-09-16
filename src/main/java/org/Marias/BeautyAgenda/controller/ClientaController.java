@@ -31,7 +31,7 @@ public class ClientaController {
         return clientaService.findByNombre(nombre);
     }
 
-    @PostMapping("/post")
+    @PostMapping
     public ResponseEntity<ClientaDTO> save(@RequestBody ClientaRequestDTO dto){
         return ResponseEntity.ok(clientaService.save(dto));
     }

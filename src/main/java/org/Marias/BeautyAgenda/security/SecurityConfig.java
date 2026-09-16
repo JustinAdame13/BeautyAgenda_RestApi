@@ -38,8 +38,16 @@ public class SecurityConfig {
                         .requestMatchers("/Usuarios/me").authenticated()
                         .requestMatchers("/Usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/Empleadas/**").hasRole("ADMIN")
-                        .requestMatchers("/Plantillas/**").hasRole("ADMIN")
-                        .requestMatchers("/Mensajes/**").hasRole("ADMIN")
+                        // Plantillas: todos pueden ver (las necesitan para asignar servicios), solo ADMIN modifica
+                        .requestMatchers(HttpMethod.GET, "/Plantillas/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/Plantillas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/Plantillas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/Plantillas/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/Mensajes/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/Mensajes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/Mensajes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/Mensajes/**").hasRole("ADMIN")
 
                         // Servicios: todos pueden ver, solo ADMIN y JEFA modifican
                         .requestMatchers(HttpMethod.GET, "/Servicios/**").authenticated()
@@ -50,6 +58,8 @@ public class SecurityConfig {
                         // Clientas: cualquier usuario autenticado (ADMIN, JEFA, EMPLEADA)
                         .requestMatchers(HttpMethod.DELETE, "/Clientas/**").hasAnyRole("ADMIN", "JEFA")
                         .requestMatchers("/Clientas/**").authenticated()
+
+                        .requestMatchers("/Citas/**").authenticated()
 
                         .anyRequest().authenticated()
                 )
