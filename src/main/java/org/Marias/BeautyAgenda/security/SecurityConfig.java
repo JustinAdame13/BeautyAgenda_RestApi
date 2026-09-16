@@ -9,6 +9,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -18,6 +24,7 @@ public class SecurityConfig {
 
         http
                 // Deshabilitamos CSRF porque estamos haciendo una REST API
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
 
                 // La API no necesita sesiones
@@ -28,6 +35,7 @@ public class SecurityConfig {
                 // Configuración de las rutas
                 .authorizeHttpRequests(auth -> auth
                         // Gestión de usuarios: solo ADMIN
+                        .requestMatchers("/Usuarios/me").authenticated()
                         .requestMatchers("/Usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/Empleadas/**").hasRole("ADMIN")
                         .requestMatchers("/Plantillas/**").hasRole("ADMIN")
@@ -56,6 +64,23 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(
+                "https://mariasbeautysalon.org",
+                "http://localhost:5173" // tu servidor de desarrollo de Vite
+        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
+
 
 

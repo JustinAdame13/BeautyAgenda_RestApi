@@ -2,11 +2,14 @@ package org.Marias.BeautyAgenda.controller;
 
 import org.Marias.BeautyAgenda.dto.UsuarioDTO;
 import org.Marias.BeautyAgenda.dto.UsuarioRequestDTO;
-import org.Marias.BeautyAgenda.entity.Usuario;
 import org.Marias.BeautyAgenda.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -36,6 +39,10 @@ public class UsuarioController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         usuarioService.delete(id);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioDTO> me(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(usuarioService.findByUsername(userDetails.getUsername()));
     }
 
 }

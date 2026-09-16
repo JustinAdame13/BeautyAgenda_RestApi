@@ -37,6 +37,12 @@ public class UsuarioService {
                 .orElseThrow(()-> new EntidadNoEncontradaException("Usuario no encontrado"));
         return UsuarioMapper.toDTO(usuario);
     }
+    //metodo para buscar por username (usado por el endpoint /me)
+    public UsuarioDTO findByUsername(String username){
+        Usuario usuario = usuarioRepo.findByUsername(username)
+                .orElseThrow(() -> new EntidadNoEncontradaException("Usuario no encontrado"));
+        return UsuarioMapper.toDTO(usuario);
+    }
     //metodo para guardar
     public UsuarioDTO save(UsuarioRequestDTO dto){
         Usuario usuario = UsuarioMapper.RqToEntity(dto, passwordEncoder.encode(dto.getPassword()));
