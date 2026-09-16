@@ -41,7 +41,7 @@ public class MensajeSchedulerService {
     @Autowired
     private MensajeService mensajeService;
 
-    @Scheduled(cron = "0 0 9 * * *", zone = "America/Mexico_City")
+//    @Scheduled(cron = "0 0 9 * * *", zone = "America/Mexico_City")
     @Transactional
     public void generarMensajesDeCumpleanos() {
 
@@ -82,7 +82,7 @@ public class MensajeSchedulerService {
         }
     }
 
-    @Scheduled(cron = "0 0 20 * * *", zone = "America/Mexico_City")
+//    @Scheduled(cron = "0 0 20 * * *", zone = "America/Mexico_City")
     @Transactional
     public void enviarMensajesDelDia() {
         LocalDate hoy = LocalDate.now(ZONA_NEGOCIO);
@@ -93,7 +93,7 @@ public class MensajeSchedulerService {
         }
     }
 
-    @Scheduled(cron = "0 0 21 * * *", zone = "America/Mexico_City")
+//    @Scheduled(cron = "0 0 21 * * *", zone = "America/Mexico_City")
     @Transactional
     public void reintentarFallidos() {
         LocalDate hoy = LocalDate.now(ZONA_NEGOCIO);

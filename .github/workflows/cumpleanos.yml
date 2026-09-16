@@ -1,0 +1,17 @@
+name: Generar mensajes de cumpleaños
+
+on:
+  schedule:
+    # GitHub Actions usa UTC: 15:00 UTC = 09:00 America/Mexico_City.
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+jobs:
+  disparar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generar mensajes para cumpleaños próximos
+        run: |
+          curl --fail-with-body --show-error --silent -X POST "${{ secrets.BACKEND_URL }}/internal/generar-cumpleanos" \
+            -H "X-Internal-Key: ${{ secrets.INTERNAL_API_KEY }}" \
+            --max-time 90 --retry 3 --retry-delay 15

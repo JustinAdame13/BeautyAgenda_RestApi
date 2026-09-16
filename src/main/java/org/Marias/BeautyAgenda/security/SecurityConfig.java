@@ -34,6 +34,8 @@ public class SecurityConfig {
 
                 // Configuración de las rutas
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers("/internal/**").permitAll()
                         // Gestión de usuarios: solo ADMIN
                         .requestMatchers("/Usuarios/me").authenticated()
                         .requestMatchers("/Usuarios/**").hasRole("ADMIN")

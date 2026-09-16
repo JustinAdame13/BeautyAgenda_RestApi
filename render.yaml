@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: beauty-agenda-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /internal/ping
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_ID
+        sync: false
+      - key: INTERNAL_API_KEY
+        generateValue: true
