@@ -14,4 +14,4 @@ jobs:
         run: |
           curl --fail-with-body --show-error --silent -X POST "${{ secrets.BACKEND_URL }}/internal/generar-cumpleanos" \
             -H "X-Internal-Key: ${{ secrets.INTERNAL_API_KEY }}" \
-            --max-time 90 --retry 3 --retry-delay 15
+            --max-time 180 --retry 2 --retry-delay 30
