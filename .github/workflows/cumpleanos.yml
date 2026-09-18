@@ -3,7 +3,7 @@ name: Generar mensajes de cumpleaños
 on:
   schedule:
     # GitHub Actions usa UTC: 15:00 UTC = 09:00 America/Mexico_City.
-    - cron: "0 15 * * *"
+    - cron: "0 11 * * *"
   workflow_dispatch:
 
 jobs:

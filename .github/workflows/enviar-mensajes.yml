@@ -3,7 +3,7 @@ name: Enviar mensajes del día
 on:
   schedule:
     # GitHub Actions usa UTC: 02:00 UTC = 20:00 America/Mexico_City (del día anterior UTC).
-    - cron: "0 2 * * *"
+    - cron: "0 22 * * *"
   workflow_dispatch:
 
 jobs:
