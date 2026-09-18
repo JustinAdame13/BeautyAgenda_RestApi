@@ -3,7 +3,7 @@ name: Reintentar mensajes fallidos
 on:
   schedule:
     # GitHub Actions usa UTC: 03:00 UTC = 21:00 America/Mexico_City (del día anterior UTC).
-    - cron: "0 23 * * *"
+    - cron: "0 1 * * *"
   workflow_dispatch:
 
 jobs:
