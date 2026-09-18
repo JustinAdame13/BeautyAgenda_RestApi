@@ -118,7 +118,8 @@ public class MensajeSchedulerService {
                     mensaje.getClienta().getTelefono(),
                     mensaje.getPlantilla().getNombreMeta(),
                     CODIGO_IDIOMA,
-                    parametrosOrdenados
+                    parametrosOrdenados,
+                    mensaje.getPlantilla().getHeaderImageUrl()
             );
 
             mensaje.setEstado(EstadoMensaje.ENVIADO);

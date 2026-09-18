@@ -18,4 +18,5 @@ public class PlantillaDTO {
     private List<Long> idsServicios;
     private Integer diasOffset;
     private List<String> ordenParametros;
+    private String headerImageUrl;
 }

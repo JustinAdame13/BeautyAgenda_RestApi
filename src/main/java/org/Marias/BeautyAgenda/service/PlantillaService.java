@@ -44,6 +44,7 @@ public class PlantillaService {
             entity.setNombreMeta(request.getNombreMeta());
             entity.setDiasOffset(request.getDiasOffset());
             entity.setOrdenParametros(request.getOrdenParametros());
+            entity.setHeaderImageUrl(request.getHeaderImageUrl());
 
             return PlantillaMapper.toDTO(plantillaRepo.save(entity));
         }

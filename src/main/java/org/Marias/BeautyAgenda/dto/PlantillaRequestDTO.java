@@ -17,6 +17,7 @@ public class PlantillaRequestDTO {
     private String nombreMeta;
     private Integer diasOffset;
     private List<String> ordenParametros;
+    private String headerImageUrl = "";
 
 }
 

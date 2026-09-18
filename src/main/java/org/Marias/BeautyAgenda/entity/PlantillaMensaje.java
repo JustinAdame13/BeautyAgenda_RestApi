@@ -43,4 +43,7 @@ public class PlantillaMensaje {
     @Column(name = "orden_parametros", columnDefinition = "jsonb")
     private List<String> ordenParametros;
 
+    @Column(name = "header_image_url", nullable = false, length = 500)
+    private String headerImageUrl;
+
 }

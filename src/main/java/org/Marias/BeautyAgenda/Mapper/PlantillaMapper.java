@@ -14,11 +14,12 @@ public class PlantillaMapper {
                 plantilla.getNombreMeta(),
                 plantilla.getServicios().stream().map(s -> s.getId()).collect(Collectors.toList()),
                 plantilla.getDiasOffset(),
-                plantilla.getOrdenParametros());
+                plantilla.getOrdenParametros(),
+                plantilla.getHeaderImageUrl() != null ? plantilla.getHeaderImageUrl() : "");
     }
 
     public static PlantillaMensaje toEntity (PlantillaRequestDTO dto){
-     return new PlantillaMensaje(null, dto.getTipo(), dto.getNombreMeta(), new HashSet<>(), dto.getDiasOffset(), dto.getOrdenParametros());
+     return new PlantillaMensaje(null, dto.getTipo(), dto.getNombreMeta(), new HashSet<>(), dto.getDiasOffset(), dto.getOrdenParametros(), dto.getHeaderImageUrl());
     }
 
 

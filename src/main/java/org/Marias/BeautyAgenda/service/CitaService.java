@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class CitaService {
+
+    private static final ZoneId ZONA_NEGOCIO = ZoneId.of("America/Mexico_City");
 
     @Autowired
     private CitaRepository citaRepo;
@@ -72,6 +75,9 @@ public class CitaService {
     //metodo para guardar citas
     @Transactional //si algo falla_todo se devuelve
     public CitaDTO save(CitaRequestDTO dto){
+        System.out.println("[DEBUG] Recibiendo cita - inicio: " + dto.getInicio() + ", fin: " + dto.getFin());
+        System.out.println("[DEBUG] Zona horaria del servidor: " + ZONA_NEGOCIO);
+
         Clienta clienta = clientaRepo.findById(dto.getIdClienta())
                 .orElseThrow(()-> new EntidadNoEncontradaException("Clienta no encontrada"));
         Empleada empleada = empleadaRepo.findById(dto.getIdEmpleada())
@@ -80,6 +86,8 @@ public class CitaService {
         Map<Long, Servicio> servicios = resolverServicios(dto.getServicios());
 
         Cita cita = CitaMapper.RqToEntity(dto, clienta, empleada, servicios);
+
+        System.out.println("[DEBUG] Cita guardada - inicio: " + cita.getInicio() + ", fin: " + cita.getFin());
 
         Cita citaGuardada = citaRepo.save(cita);
         generarMensajesParaCita(citaGuardada);
@@ -191,7 +199,7 @@ public class CitaService {
 
             //calcular si aplica el recordatorio
             LocalDateTime momentoRecordatorio = cita.getInicio().toLocalDate().minusDays(1).atTime(20,0);
-            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now(ZoneId.of("America/Mexico_City")));
+            boolean generarRecordatorio = momentoRecordatorio.isAfter(LocalDateTime.now(ZONA_NEGOCIO));
 
             if(plantillaRecordatorio.isPresent() && generarRecordatorio){
                 MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
@@ -207,10 +215,12 @@ public class CitaService {
             //buscamos plantilla de seguimiento
             Optional<PlantillaMensaje> plantillaSeguimiento = buscarPlantilla(servicio, TipoPlantilla.SEGUIMIENTO);
             if(plantillaSeguimiento.isPresent()){
+                LocalDate fechaProgramada = cita.getInicio().atZone(ZONA_NEGOCIO).toLocalDate()
+                        .plusDays(plantillaSeguimiento.get().getDiasOffset());
                 MensajeRequestDTO dto = new MensajeRequestDTO(cita.getClienta().getId(),
                         cita.getId(),
                         plantillaSeguimiento.get().getId(),
-                        cita.getInicio().toLocalDate().plusDays(plantillaSeguimiento.get().getDiasOffset()),
+                        fechaProgramada,
                         Map.of(
                                 "nombre",cita.getClienta().getNombre()
 

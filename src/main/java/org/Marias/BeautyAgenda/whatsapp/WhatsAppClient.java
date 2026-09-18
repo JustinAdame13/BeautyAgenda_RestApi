@@ -8,6 +8,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -28,11 +29,12 @@ public class WhatsAppClient {
     private final RestClient restClient = RestClient.create();
 
     public void enviarPlantilla(String telefono, String nombrePlantilla,
-                                String codigoIdioma, List<String> parametrosOrdenados) {
+                                String codigoIdioma, List<String> parametrosOrdenados, String headerImageUrl) {
 
         if (!whatsappEnabled) {
             System.out.println("[SIMULADO] WhatsApp a " + telefono +
-                    " | plantilla: " + nombrePlantilla + " | params: " + parametrosOrdenados);
+                    " | plantilla: " + nombrePlantilla + " | params: " + parametrosOrdenados +
+                    " | headerImageUrl: " + headerImageUrl);
             return;
         }
 
@@ -40,13 +42,20 @@ public class WhatsAppClient {
                 .map(texto -> new WhatsAppParameter("text", texto))
                 .toList();
 
-        WhatsAppComponent bodyComponent = new WhatsAppComponent("body", parametros);
+        WhatsAppComponent bodyComponent = new WhatsAppComponent("body", List.copyOf(parametros));
+
+        List<WhatsAppComponent> components = new ArrayList<>();
+        if (headerImageUrl != null && !headerImageUrl.isEmpty()) {
+            components.add(new WhatsAppComponent("header",
+                List.of(new WhatsAppImageParameter("image", new WhatsAppImage(headerImageUrl)))));
+        }
+        components.add(bodyComponent);
 
         WhatsAppTemplateRequest request = new WhatsAppTemplateRequest(
                 "whatsapp",
                 telefono,
                 "template",
-                new WhatsAppTemplate(nombrePlantilla, new WhatsAppLanguage(codigoIdioma), List.of(bodyComponent))
+                new WhatsAppTemplate(nombrePlantilla, new WhatsAppLanguage(codigoIdioma), components)
         );
 
         try {

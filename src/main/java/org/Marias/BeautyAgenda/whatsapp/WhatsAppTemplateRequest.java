@@ -18,6 +18,10 @@ record WhatsAppTemplate(
 
 record WhatsAppLanguage(String code) {}
 
-record WhatsAppComponent(String type, List<WhatsAppParameter> parameters) {}
+record WhatsAppComponent(String type, List<Object> parameters) {}
 
 record WhatsAppParameter(String type, String text) {}
+
+record WhatsAppImageParameter(String type, WhatsAppImage image) {}
+
+record WhatsAppImage(String link) {}
